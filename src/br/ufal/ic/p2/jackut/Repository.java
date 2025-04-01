@@ -1,6 +1,7 @@
 package br.ufal.ic.p2.jackut;
 
 import br.ufal.ic.p2.jackut.Exceptions.EmptyAttributeException;
+import br.ufal.ic.p2.jackut.Exceptions.InvalidPasswordOrLoginException;
 import br.ufal.ic.p2.jackut.Exceptions.UserAlreadyExistsException;
 import br.ufal.ic.p2.jackut.Exceptions.UserNotFoundException;
 
@@ -23,11 +24,13 @@ public class Repository implements Serializable {
         loadUsers();
     }
 
-    public Session newSession(String login, String senha) throws UserNotFoundException, EmptyAttributeException {
+    public Session newSession(String login, String password) throws UserNotFoundException, InvalidPasswordOrLoginException {
 
         User user = users.get(login);
-        if (user == null) {
-            throw new UserNotFoundException();
+
+
+        if(user == null || !user.getPassword().equals(password)) {
+            throw new InvalidPasswordOrLoginException();
         }
 
         int sessionId = sessionCounter.getAndIncrement();

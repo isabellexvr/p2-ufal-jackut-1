@@ -1,9 +1,8 @@
 package br.ufal.ic.p2.jackut;
 
-import br.ufal.ic.p2.jackut.Exceptions.EmptyAttributeException;
-import br.ufal.ic.p2.jackut.Exceptions.UserAlreadyExistsException;
-import br.ufal.ic.p2.jackut.Exceptions.UserNotFoundException;
+import br.ufal.ic.p2.jackut.Exceptions.*;
 
+import javax.security.auth.login.LoginException;
 import java.io.Serializable;
 import java.util.List;
 
@@ -22,12 +21,20 @@ public class Jackut implements Serializable {
         return user.getAtributo(atributo);
     }
 
-    public void createUser(String login, String password, String name) throws UserAlreadyExistsException, UserNotFoundException {
-        repository.addUser(login, password, name);
+    public void createUser(String login, String password, String name) throws UserAlreadyExistsException, InvalidLoginException, InvalidPasswordException {
+
+        if(login == null) {
+            throw new InvalidLoginException();
+        }else if(password == null){
+            throw new InvalidPasswordException();
+        }else{
+            repository.addUser(login, password, name);
+        }
+
 
     }
 
-    public int newSession(String login, String senha) throws UserNotFoundException, EmptyAttributeException {
+    public int newSession(String login, String senha) throws UserNotFoundException, InvalidPasswordOrLoginException {
         Session session = this.repository.newSession(login, senha);
         return session.getId();
     }

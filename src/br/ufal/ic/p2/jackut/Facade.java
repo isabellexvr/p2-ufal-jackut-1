@@ -1,8 +1,6 @@
 package br.ufal.ic.p2.jackut;
 
-import br.ufal.ic.p2.jackut.Exceptions.EmptyAttributeException;
-import br.ufal.ic.p2.jackut.Exceptions.UserAlreadyExistsException;
-import br.ufal.ic.p2.jackut.Exceptions.UserNotFoundException;
+import br.ufal.ic.p2.jackut.Exceptions.*;
 import easyaccept.EasyAccept;
 
 public class Facade {
@@ -13,7 +11,7 @@ public class Facade {
         this.jackut = new Jackut();
     }
 
-    public void criarUsuario(String login, String password, String nome) throws UserAlreadyExistsException, UserNotFoundException {
+    public void criarUsuario(String login, String password, String nome) throws InvalidPasswordException, InvalidLoginException,UserAlreadyExistsException {
         this.jackut.createUser(login, password, nome);
     }
 
@@ -22,7 +20,7 @@ public class Facade {
         return this.jackut.getUserAttribute(login, atributo);
     }
 
-    public int abrirSessao(String login, String senha) throws UserNotFoundException, EmptyAttributeException {
+    public int abrirSessao(String login, String senha) throws UserNotFoundException, InvalidPasswordOrLoginException {
         return this.jackut.newSession(login, senha);
     }
 
