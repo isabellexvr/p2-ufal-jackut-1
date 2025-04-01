@@ -1,10 +1,10 @@
 package br.ufal.ic.p2.jackut;
 
 public class Session {
-    private int id;
+    private String id;
     private User user;
 
-    Session(int id, User user) {
+    Session(String id, User user) {
         this.id = id;
         this.user = user;
     }
@@ -13,7 +13,7 @@ public class Session {
         return user;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 }

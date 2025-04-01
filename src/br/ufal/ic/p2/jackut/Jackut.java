@@ -11,14 +11,23 @@ public class Jackut implements Serializable {
 
     public Jackut() {
         this.repository = new Repository();
+    }
+
+    public void resetSystem(){
         this.repository.eraseEverything();
     }
 
     public String getUserAttribute(String login, String atributo) throws EmptyAttributeException, UserNotFoundException {
-        // pelo repo pegar o atributo
-        User user = this.repository.getUser(login);
 
-        return user.getAtributo(atributo);
+        User user = this.repository.getUser(login);
+        String attribute = user.getAtributo(atributo);
+
+
+        if(attribute == null) {
+            throw new EmptyAttributeException();
+        }
+
+        return attribute;
     }
 
     public void createUser(String login, String password, String name) throws UserAlreadyExistsException, InvalidLoginException, InvalidPasswordException {
@@ -31,10 +40,9 @@ public class Jackut implements Serializable {
             repository.addUser(login, password, name);
         }
 
-
     }
 
-    public int newSession(String login, String senha) throws UserNotFoundException, InvalidPasswordOrLoginException {
+    public String newSession(String login, String senha) throws UserNotFoundException, InvalidPasswordOrLoginException {
         Session session = this.repository.newSession(login, senha);
         return session.getId();
     }
@@ -59,6 +67,32 @@ public class Jackut implements Serializable {
 //            sender.addFriend(receiver);
 //        }
 //    }
+
+    public void endSystem(){
+        this.repository.saveUsers();
+    }
+
+    public void editProfile(String id, String atributo, String valor) throws UserNotFoundException, EmptyAttributeException {
+        if(id.isEmpty()){
+            throw new UserNotFoundException();
+        }
+
+        Session session = this.repository.getSession(id);
+
+        if(session == null){
+            throw new UserNotFoundException();
+        }
+
+        this.repository.editProfile(session, atributo, valor);
+
+//        if(session == null) {
+//            this.repository.editProfile(session, atributo, valor);
+//        }else{
+//            throw new UserNotFoundException();
+//        }
+
+
+    }
 
 
 }

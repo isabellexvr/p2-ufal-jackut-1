@@ -5,10 +5,10 @@ import easyaccept.EasyAccept;
 
 public class Facade {
 
-    private Jackut jackut = new Jackut();
+    private final Jackut jackut = new Jackut();
 
     public void zerarSistema() {
-        this.jackut = new Jackut();
+        this.jackut.resetSystem();
     }
 
     public void criarUsuario(String login, String password, String nome) throws InvalidPasswordException, InvalidLoginException,UserAlreadyExistsException {
@@ -20,8 +20,23 @@ public class Facade {
         return this.jackut.getUserAttribute(login, atributo);
     }
 
-    public int abrirSessao(String login, String senha) throws UserNotFoundException, InvalidPasswordOrLoginException {
+    public String abrirSessao(String login, String senha) throws UserNotFoundException, InvalidPasswordOrLoginException {
         return this.jackut.newSession(login, senha);
+    }
+
+    public void encerrarSistema() {
+        this.jackut.endSystem();
+    }
+
+    public void editarPerfil(String id, String atributo, String valor) throws UserNotFoundException, EmptyAttributeException{
+        // id é da sessão
+        // deve estar logado, existir sessão, pra poder editar
+        try{
+            this.jackut.editProfile(id, atributo, valor);
+        }catch(EmptyAttributeException e){
+            System.out.println(e.getMessage());
+        }
+
     }
 
 

@@ -10,33 +10,44 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class Repository implements Serializable {
 
-    private static final AtomicInteger sessionCounter = new AtomicInteger(1);
     private static final long serialVersionUID = 1L;
     private static final String FILE_NAME = "jackut.dat";
     private Map<String, User> users = new HashMap<>();
-    private Map<Integer, Session> sessions = new HashMap<>();
+    private Map<String, Session> sessions = new HashMap<>();
 
     public Repository() {
         loadUsers();
     }
 
     public Session newSession(String login, String password) throws UserNotFoundException, InvalidPasswordOrLoginException {
-
         User user = users.get(login);
 
-
-        if(user == null || !user.getPassword().equals(password)) {
+        if (user == null || !user.getPassword().equals(password)) {
             throw new InvalidPasswordOrLoginException();
         }
 
-        int sessionId = sessionCounter.getAndIncrement();
+        // Gera um ID único para a sessão
+        String sessionId = UUID.randomUUID().toString();
+
+        // Cria e armazena a sessão
         sessions.put(sessionId, new Session(sessionId, user));
 
         return sessions.get(sessionId);
+    }
+
+
+    public Session getSession(String sessionId) {
+        return sessions.get(sessionId);
+    }
+
+    public void editProfile(Session session, String atributo, String valor) throws EmptyAttributeException{
+        //System.out.println("setando atributo: " + atributo + " valor: " + valor);
+        session.getUser().setAtributo(atributo, valor);
+
+        //System.out.println("atributo editado: " + session.getUser().getAtributo(atributo));
     }
 
     public User getUserByName(String name) throws UserNotFoundException {
@@ -82,7 +93,7 @@ public class Repository implements Serializable {
         return users.get(login);
     }
 
-    private void saveUsers() {
+    public void saveUsers() {
         try (OutputStream fileStream = new FileOutputStream(FILE_NAME);
              OutputStreamWriter writer = new OutputStreamWriter(fileStream);
              ObjectOutputStream oos = new ObjectOutputStream(fileStream)) {
@@ -102,13 +113,15 @@ public class Repository implements Serializable {
         }
 
         try (InputStream fileStream = new FileInputStream(FILE_NAME);
-             InputStreamReader reader = new InputStreamReader(fileStream);
              ObjectInputStream ois = new ObjectInputStream(fileStream)) {
 
             users = (HashMap<String, User>) ois.readObject();
 
         } catch (IOException | ClassNotFoundException e) {
+            System.out.println("Erro ao carregar usuários: " + e.getMessage());
             users = new HashMap<>();
         }
     }
+
+
 }
