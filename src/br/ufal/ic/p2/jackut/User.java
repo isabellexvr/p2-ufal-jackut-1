@@ -1,104 +1,72 @@
 package br.ufal.ic.p2.jackut;
+import br.ufal.ic.p2.jackut.Exceptions.EmptyAttributeException;
+
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class User implements Serializable {
-    private String name, password, login, authToken, id;
-    private static final long serialVersionUID = 1L;
-    private List<User> friends, invitations;
+    private String login;
+    private String password;
+    private String name;
+    private List<User> friends;
+    private List<FriendRequest> receivedInvitations;
+    private List<Message> messages;
+    private Map<String, String> atributosExtras;
 
-    User(String name, String password, String login) {
-        this.name = name;
-        this.password = password;
+    public User(String login, String password, String name) {
         this.login = login;
+        this.password = password;
+        this.name = name;
         this.friends = new ArrayList<>();
-        this.invitations = new ArrayList<>();
-        saveUser();
+        this.receivedInvitations = new ArrayList<>();
+        this.messages = new ArrayList<>();
+        this.atributosExtras = new HashMap<>();
     }
 
-    public static User loadUser(String login) {
-        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(login + ".ser"))) {
-            return (User) ois.readObject();
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
+    public String getLogin() { return login; }
+    public String getPassword() { return password; }
+    public String getName() { return name; }
+    public List<User> getFriends() { return friends; }
+    public List<FriendRequest> getReceivedInvitations() { return receivedInvitations; }
+    public List<Message> getMessages() { return messages; }
 
-    public static User authenticateUser(String login, String password) {
-        User user = loadUser(login); // Load user by login
-        if (user != null && user.getPassword().equals(password)) {
-            return user; // Return user if password matches
-        }
-        return null; // Return null if authentication fails
-    }
-
-
-    private void saveUser() {
-        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(login + ".ser"))) {
-            oos.writeObject(this);
-            System.out.println("User " + login + " saved successfully.");
-        } catch (IOException e) {
-            e.printStackTrace();
+    public void addFriend(User friend) {
+        if (!friends.contains(friend)) {
+            friends.add(friend);
         }
     }
 
-    public void newSession(String login, String password) {
-        if (this.login.equals(login) && this.password.equals(password)) {
-            String authToken = UUID.randomUUID().toString();
-            this.authToken = authToken;
+    public void receiveMessage(User sender, String text) {
+        messages.add(new Message(sender, this, text));
+    }
+
+    public boolean isFriend(User user) {
+        return friends.contains(user);
+    }
+
+    public String getAtributo(String chave) {
+        switch (chave.toLowerCase()) {
+            case "login": return login;
+            case "password": return password;
+            case "nome": return name;
+            default: return atributosExtras.get(chave);
         }
     }
 
-    public String getName() {
-        return name;
+    public void setAtributo(String chave, String valor) {
+        switch (chave.toLowerCase()) {
+            case "login": this.login = valor; break;
+            case "password": this.password = valor; break;
+            case "name": this.name = valor; break;
+            default: atributosExtras.put(chave, valor); break;
+        }
     }
 
-    public String getLogin() {
-        return login;
-    }
-
-    public String getAuthToken(){return authToken;}
-
-    public String getPassword() {
-        return password;
-    }
-
-    public List<User> getFriends() { return friends;}
-
-    public List<User> getInvitations() {return invitations;}
-
-    public void setLogin(String login) {
-        this.login = login;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public void sendInvitation(User sender){
-        invitations.add(sender);
-    }
-
-    public void receiveMessage(User sender, String message){
-        System.out.println(sender.getName() + " : " + message);
-    }
-
-    public void receiveMessage(String message){
-        System.out.println(message);
-    }
-
-    public void acceptInvitation(User sender){
-        if(invitations.contains(sender)){
-            friends.add(sender);
-            sender.friends.remove(this);
-            invitations.remove(sender);
+    public void removeAtributo(String chave) throws EmptyAttributeException {
+        if(atributosExtras.containsKey(chave)) {
+            atributosExtras.remove(chave);
+        }else{
+            throw new EmptyAttributeException();
         }
     }
 }
