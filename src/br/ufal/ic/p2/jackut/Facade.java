@@ -1,9 +1,8 @@
 package br.ufal.ic.p2.jackut;
 
 import br.ufal.ic.p2.jackut.Exceptions.*;
-import easyaccept.EasyAccept;
 
-import java.util.List;
+import java.util.Set;
 
 public class Facade {
 
@@ -45,8 +44,8 @@ public class Facade {
 
     }
 
-    public List<String> getAmigos(){
-        return null;
+    public String getAmigos(String login) throws UserNotFoundException {
+        return this.jackut.getFriends(login);
     }
 
     public boolean ehAmigo(String login, String amigo) throws Exception{
@@ -61,8 +60,5 @@ public class Facade {
         }
 
     }
-
-
-
 
 }

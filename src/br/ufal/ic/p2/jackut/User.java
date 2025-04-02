@@ -26,11 +26,27 @@ public class User implements Serializable {
     public String getLogin() { return login; }
     public String getPassword() { return password; }
     public String getName() { return name; }
-    public List<String> getFriends() { return friends; }
+
+    public List<String> getFriends() throws UserNotFoundException {
+        List<String> finalFriends = new ArrayList<>();
+
+        for (String friend : friends) {
+            User user = this.repository.getUser(friend);
+            if(user.friends.contains(this.login)) {
+                finalFriends.add(friend);
+            }
+        }
+
+        return finalFriends;
+    }
+
     public List<Message> getMessages() { return messages; }
 
-    public void addFriend(String friendLogin) throws Exception, WaitingToAcceptException, AlreadyFriendException {
-//        System.out.println("buscando amigo: " + friendLogin);
+    public void addFriend(String friendLogin) throws CantAddItselfException, UserNotFoundException, WaitingToAcceptException, AlreadyFriendException {
+        if(friendLogin.equals(this.login)) {
+            throw new CantAddItselfException();
+        }
+
         User possibleFriend = this.repository.getUser(friendLogin);
 
         boolean isAlreadyFriend = friends.contains(friendLogin);
@@ -43,6 +59,7 @@ public class User implements Serializable {
             throw new AlreadyFriendException();
         }
         friends.add(friendLogin);
+
         this.repository.saveData();
 
     }

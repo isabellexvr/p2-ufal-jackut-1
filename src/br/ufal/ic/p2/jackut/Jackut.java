@@ -2,9 +2,9 @@ package br.ufal.ic.p2.jackut;
 
 import br.ufal.ic.p2.jackut.Exceptions.*;
 
-import javax.security.auth.login.LoginException;
 import java.io.Serializable;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 public class Jackut implements Serializable {
     private Repository repository;
@@ -82,6 +82,13 @@ public class Jackut implements Serializable {
 
         this.repository.editProfile(session, atributo, valor);
     }
+
+    public String getFriends(String login) throws UserNotFoundException {
+        User user = this.repository.getUser(login);
+
+        return "{" + String.join(",", user.getFriends()) + "}";
+    }
+
 
 
 }

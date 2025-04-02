@@ -46,9 +46,9 @@ public class Repository implements Serializable {
         return sessions.get(sessionId);
     }
 
-    public User getUserBySessionId(String id) throws Exception {
+    public User getUserBySessionId(String id) throws UserNotFoundException {
         if (!sessions.containsKey(id)) {
-            throw new Exception("Sessão não encontrada: " + id);
+            throw new UserNotFoundException();
         }
         return sessions.get(id).getUser();
     }
