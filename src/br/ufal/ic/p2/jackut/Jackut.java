@@ -10,7 +10,7 @@ public class Jackut implements Serializable {
     private Repository repository;
 
     public Jackut() {
-        this.repository = new Repository();
+        this.repository = Repository.getInstance();
     }
 
     public void resetSystem(){
@@ -44,32 +44,29 @@ public class Jackut implements Serializable {
 
     public String newSession(String login, String senha) throws UserNotFoundException, InvalidPasswordOrLoginException {
         Session session = this.repository.newSession(login, senha);
+//        System.out.println("retornou isso como id: " + session.getId());
         return session.getId();
     }
 
-//    public void sendFriendRequest(String senderLogin, String receiverLogin) {
-//        User sender = repository.getUser(senderLogin);
-//        User receiver = repository.getUser(receiverLogin);
-//
-//        if (sender != null && receiver != null) {
-//            receiver.getReceivedInvitations().add(new FriendRequest(sender, receiver));
-//        }
-//    }
-//
-//    public void acceptFriendRequest(String receiverLogin, String senderLogin) {
-//        User receiver = repository.getUser(receiverLogin);
-//        User sender = repository.getUser(senderLogin);
-//
-//        if (receiver != null && sender != null) {
-//            List<FriendRequest> requests = receiver.getReceivedInvitations();
-//            requests.removeIf(request -> request.getSender().equals(sender));
-//            receiver.addFriend(sender);
-//            sender.addFriend(receiver);
-//        }
-//    }
+    public boolean isFriend(String login, String friend)throws Exception, UserNotFoundException{
+        User user = repository.getUser(login);
+        return user.isFriend(friend);
+
+    }
+
+    public void addFriend(String userSessionId, String friendLogin) throws Exception, UserNotFoundException, AlreadyFriendException, WaitingToAcceptException {
+
+        User user = this.repository.getUserBySessionId(userSessionId);
+
+        if(user.isFriend(friendLogin)) {
+            throw new AlreadyFriendException();
+        }
+        user.addFriend(friendLogin);
+    }
+
 
     public void endSystem(){
-        this.repository.saveUsers();
+        this.repository.saveData();
     }
 
     public void editProfile(String id, String atributo, String valor) throws UserNotFoundException, EmptyAttributeException {
@@ -84,14 +81,6 @@ public class Jackut implements Serializable {
         }
 
         this.repository.editProfile(session, atributo, valor);
-
-//        if(session == null) {
-//            this.repository.editProfile(session, atributo, valor);
-//        }else{
-//            throw new UserNotFoundException();
-//        }
-
-
     }
 
 

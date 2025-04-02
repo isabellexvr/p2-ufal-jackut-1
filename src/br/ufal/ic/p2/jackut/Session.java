@@ -1,6 +1,8 @@
 package br.ufal.ic.p2.jackut;
 
-public class Session {
+import java.io.Serializable;
+
+public class Session implements Serializable {
     private String id;
     private User user;
 

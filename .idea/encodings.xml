@@ -7,5 +7,6 @@
     <file url="file://$PROJECT_DIR$/src/br/ufal/ic/p2/jackut/Exceptions/UserAlreadyExistsException.java" charset="ISO-8859-1" />
     <file url="file://$PROJECT_DIR$/src/br/ufal/ic/p2/jackut/Exceptions/UserNotFoundException.java" charset="ISO-8859-1" />
     <file url="file://$PROJECT_DIR$/tests/us1_1.txt" charset="ISO-8859-1" />
+    <file url="file://$PROJECT_DIR$/tests/us3_1.txt" charset="ISO-8859-1" />
   </component>
 </project>
