@@ -11,8 +11,14 @@ public class Main {
         String[] args8 = {"br.ufal.ic.p2.jackut.Facade", "tests/us4_1.txt"};
         String[] args9 = {"br.ufal.ic.p2.jackut.Facade", "tests/us4_2.txt"};
 
-
+        EasyAccept.main(args2);
+        EasyAccept.main(args3);
+        EasyAccept.main(args4);
+        EasyAccept.main(args5);
         EasyAccept.main(args6);
+        EasyAccept.main(args7);
+        EasyAccept.main(args8);
+        EasyAccept.main(args9);
 
     }
 }
