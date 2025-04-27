@@ -20,6 +20,7 @@ public class Repository implements Serializable {
 
     private Map<String, User> users = new HashMap<>();
     private Map<String, Session> sessions = new HashMap<>();
+    private Map<String, Community> communities = new HashMap<>(); // name pra comunidade, único
 
     /**
      * Private constructor that loads saved data upon initialization.
@@ -38,6 +39,14 @@ public class Repository implements Serializable {
             instance = new Repository();
         }
         return instance;
+    }
+
+    public boolean isCommunityCreated(String communityName) {
+        return communities.containsKey(communityName);
+    }
+
+    public void newCommunity(String name, Community community) {
+        this.communities.put(name, community);
     }
 
     /**

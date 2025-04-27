@@ -5,14 +5,14 @@ import br.ufal.ic.p2.jackut.Exceptions.*;
 import java.io.Serializable;
 
 /**
- * Classe principal do sistema Jackut, responsável por gerenciar usuários, sessões, amizades e mensagens.
+ * Classe principal do sistema Jackut, respons?vel por gerenciar usu?rios, sess?es, amizades e mensagens.
  * Esta classe atua como a interface do sistema, interagindo com o {@link Repository}.
  */
 public class Jackut implements Serializable {
     private Repository repository;
 
     /**
-     * Construtor da classe Jackut. Inicializa o repositório.
+     * Construtor da classe Jackut. Inicializa o reposit?rio.
      */
     public Jackut() {
         this.repository = Repository.getInstance();
@@ -26,13 +26,13 @@ public class Jackut implements Serializable {
     }
 
     /**
-     * Obtém um atributo específico de um usuário.
+     * Obt?m um atributo espec?fico de um usu?rio.
      *
-     * @param login Login do usuário.
+     * @param login Login do usu?rio.
      * @param atributo Nome do atributo a ser recuperado.
      * @return O valor do atributo.
      * @throws EmptyAttributeException Se o atributo estiver vazio.
-     * @throws UserNotFoundException Se o usuário não for encontrado.
+     * @throws UserNotFoundException Se o usu?rio n?o for encontrado.
      */
     public String getUserAttribute(String login, String atributo) throws EmptyAttributeException, UserNotFoundException {
         User user = this.repository.getUser(login);
@@ -46,14 +46,14 @@ public class Jackut implements Serializable {
     }
 
     /**
-     * Cria um novo usuário no sistema.
+     * Cria um novo usu?rio no sistema.
      *
-     * @param login Login do usuário.
-     * @param password Senha do usuário.
-     * @param name Nome do usuário.
-     * @throws UserAlreadyExistsException Se o usuário já existir.
-     * @throws InvalidLoginException Se o login for inválido.
-     * @throws InvalidPasswordException Se a senha for inválida.
+     * @param login Login do usu?rio.
+     * @param password Senha do usu?rio.
+     * @param name Nome do usu?rio.
+     * @throws UserAlreadyExistsException Se o usu?rio j? existir.
+     * @throws InvalidLoginException Se o login for inv?lido.
+     * @throws InvalidPasswordException Se a senha for inv?lida.
      */
     public void createUser(String login, String password, String name) throws UserAlreadyExistsException, InvalidLoginException, InvalidPasswordException {
         if (login == null) {
@@ -66,13 +66,13 @@ public class Jackut implements Serializable {
     }
 
     /**
-     * Cria uma nova sessão para um usuário.
+     * Cria uma nova sess?o para um usu?rio.
      *
-     * @param login Login do usuário.
-     * @param senha Senha do usuário.
-     * @return O ID da nova sessão.
-     * @throws UserNotFoundException Se o usuário não for encontrado.
-     * @throws InvalidPasswordOrLoginException Se o login ou a senha forem inválidos.
+     * @param login Login do usu?rio.
+     * @param senha Senha do usu?rio.
+     * @return O ID da nova sess?o.
+     * @throws UserNotFoundException Se o usu?rio n?o for encontrado.
+     * @throws InvalidPasswordOrLoginException Se o login ou a senha forem inv?lidos.
      */
     public String newSession(String login, String senha) throws UserNotFoundException, InvalidPasswordOrLoginException {
         Session session = this.repository.newSession(login, senha);
@@ -80,12 +80,12 @@ public class Jackut implements Serializable {
     }
 
     /**
-     * Verifica se dois usuários são amigos.
+     * Verifica se dois usu?rios s?o amigos.
      *
-     * @param login Login do usuário.
+     * @param login Login do usu?rio.
      * @param friend Login do amigo.
-     * @return true se forem amigos, false caso contrário.
-     * @throws UserNotFoundException Se um dos usuários não for encontrado.
+     * @return true se forem amigos, false caso contr?rio.
+     * @throws UserNotFoundException Se um dos usu?rios n?o for encontrado.
      */
     public boolean isFriend(String login, String friend) throws UserNotFoundException {
         User user = repository.getUser(login);
@@ -93,13 +93,13 @@ public class Jackut implements Serializable {
     }
 
     /**
-     * Adiciona um amigo a um usuário.
+     * Adiciona um amigo a um usu?rio.
      *
-     * @param userSessionId ID da sessão do usuário.
+     * @param userSessionId ID da sess?o do usu?rio.
      * @param friendLogin Login do amigo.
-     * @throws UserNotFoundException Se o usuário ou amigo não forem encontrados.
-     * @throws AlreadyFriendException Se já forem amigos.
-     * @throws WaitingToAcceptException Se há uma solicitação pendente.
+     * @throws UserNotFoundException Se o usu?rio ou amigo n?o forem encontrados.
+     * @throws AlreadyFriendException Se j? forem amigos.
+     * @throws WaitingToAcceptException Se h? uma solicita??o pendente.
      */
     public void addFriend(String userSessionId, String friendLogin) throws UserNotFoundException, AlreadyFriendException, WaitingToAcceptException, CantAddItselfException {
         User user = this.repository.getUserBySessionId(userSessionId);
@@ -118,13 +118,13 @@ public class Jackut implements Serializable {
     }
 
     /**
-     * Edita o perfil de um usuário.
+     * Edita o perfil de um usu?rio.
      *
-     * @param id ID da sessão do usuário.
+     * @param id ID da sess?o do usu?rio.
      * @param atributo Nome do atributo a ser editado.
      * @param valor Novo valor do atributo.
-     * @throws UserNotFoundException Se o usuário não for encontrado.
-     * @throws EmptyAttributeException Se o atributo for inválido.
+     * @throws UserNotFoundException Se o usu?rio n?o for encontrado.
+     * @throws EmptyAttributeException Se o atributo for inv?lido.
      */
     public void editProfile(String id, String atributo, String valor) throws UserNotFoundException, EmptyAttributeException {
         if (id.isEmpty()) {
@@ -141,11 +141,11 @@ public class Jackut implements Serializable {
     }
 
     /**
-     * Retorna a lista de amigos de um usuário.
+     * Retorna a lista de amigos de um usu?rio.
      *
-     * @param login Login do usuário.
+     * @param login Login do usu?rio.
      * @return Lista de amigos formatada como uma string.
-     * @throws UserNotFoundException Se o usuário não for encontrado.
+     * @throws UserNotFoundException Se o usu?rio n?o for encontrado.
      */
     public String getFriends(String login) throws UserNotFoundException {
         User user = this.repository.getUser(login);
@@ -153,13 +153,13 @@ public class Jackut implements Serializable {
     }
 
     /**
-     * Envia uma mensagem para outro usuário.
+     * Envia uma mensagem para outro usu?rio.
      *
-     * @param sessionId ID da sessão do remetente.
-     * @param receiverLogin Login do destinatário.
-     * @param message Conteúdo da mensagem.
-     * @throws UserNotFoundException Se o remetente ou destinatário não for encontrado.
-     * @throws CantMessageItselfException Se o usuário tentar enviar uma mensagem para si mesmo.
+     * @param sessionId ID da sess?o do remetente.
+     * @param receiverLogin Login do destinat?rio.
+     * @param message Conte?do da mensagem.
+     * @throws UserNotFoundException Se o remetente ou destinat?rio n?o for encontrado.
+     * @throws CantMessageItselfException Se o usu?rio tentar enviar uma mensagem para si mesmo.
      */
     public void sendMessage(String sessionId, String receiverLogin, String message) throws UserNotFoundException, CantMessageItselfException {
         User sender = this.repository.getUserBySessionId(sessionId);
@@ -174,15 +174,26 @@ public class Jackut implements Serializable {
     }
 
     /**
-     * Obtém a primeira mensagem recebida por um usuário.
+     * Obt?m a primeira mensagem recebida por um usu?rio.
      *
-     * @param sessionId ID da sessão do usuário.
-     * @return O conteúdo da primeira mensagem.
-     * @throws UserNotFoundException Se o usuário não for encontrado.
-     * @throws NoMessagesException Se o usuário não tiver mensagens.
+     * @param sessionId ID da sess?o do usu?rio.
+     * @return O conte?do da primeira mensagem.
+     * @throws UserNotFoundException Se o usu?rio n?o for encontrado.
+     * @throws NoMessagesException Se o usu?rio n?o tiver mensagens.
      */
     public String getFirstMessage(String sessionId) throws UserNotFoundException, NoMessagesException {
         User user = this.repository.getUserBySessionId(sessionId);
         return user.getFirstMessage();
+    }
+
+    public void createCommunity(String sessionId, String name, String descricao) throws UserNotFoundException, CommunityAlreadyExistsException {
+        if (this.repository.isCommunityCreated(name)) {
+            throw new CommunityAlreadyExistsException();
+        }
+
+        User owner = this.repository.getUserBySessionId(sessionId);
+
+        Community newCommunity = new Community(name, descricao, owner);
+        this.repository.newCommunity(name, newCommunity);
     }
 }
