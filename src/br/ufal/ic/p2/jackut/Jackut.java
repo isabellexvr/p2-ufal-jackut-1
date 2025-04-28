@@ -196,4 +196,20 @@ public class Jackut implements Serializable {
         Community newCommunity = new Community(name, descricao, owner);
         this.repository.newCommunity(name, newCommunity);
     }
+
+    public String getCommunityDescription(String communityName) throws CommunityDoesntExistException{
+        return this.repository.getCommunityDescription(communityName);
+    }
+
+    public String getCommunitOwner(String communityName) throws CommunityDoesntExistException{
+        return this.repository.getCommunityOwner(communityName);
+    }
+
+    public String getMembrosComunidade(String communityName) throws CommunityDoesntExistException{
+        Community community = this.repository.getCommunityByName(communityName);
+
+        return "{" + String.join(",", community.getMembers()) + "}";
+
+
+    }
 }

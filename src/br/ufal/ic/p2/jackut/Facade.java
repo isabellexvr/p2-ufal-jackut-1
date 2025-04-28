@@ -2,6 +2,8 @@ package br.ufal.ic.p2.jackut;
 
 import br.ufal.ic.p2.jackut.Exceptions.*;
 
+import java.util.Set;
+
 /**
  * Classe de fachada para o sistema Jackut.
  * Responsável por fornecer métodos de acesso ao sistema.
@@ -152,5 +154,17 @@ public class Facade {
 
     public void criarComunidade(String sessao, String nome, String descricao) throws UserNotFoundException, CommunityAlreadyExistsException {
         this.jackut.createCommunity(sessao, nome, descricao);
+    }
+
+    public String getDescricaoComunidade(String nome) throws CommunityDoesntExistException {
+        return this.jackut.getCommunityDescription(nome);
+    }
+
+    public String getDonoComunidade(String nome) throws CommunityDoesntExistException {
+        return this.jackut.getCommunitOwner(nome);
+    }
+
+    public String getMembrosComunidade(String nome) throws CommunityDoesntExistException {
+        return this.jackut.getMembrosComunidade(nome);
     }
 }

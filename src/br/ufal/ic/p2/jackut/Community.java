@@ -13,10 +13,30 @@ public class Community implements Serializable {
         this.description = description;
         this.owner = owner;
         this.members = new ArrayList<User>();
+        members.add(owner);
     }
 
     public String getName() {
         return name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public String getOwner() {
+        return owner.getLogin();
+    }
+
+    public ArrayList<String> getMembers() {
+        ArrayList<String> membersLogins = new ArrayList<>();
+
+        for (User user : members) {
+            //System.out.println(user.getLogin());
+            membersLogins.add(user.getLogin());
+        }
+
+        return membersLogins;
     }
 
 

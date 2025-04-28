@@ -22,6 +22,7 @@ public class Repository implements Serializable {
     private Map<String, Session> sessions = new HashMap<>();
     private Map<String, Community> communities = new HashMap<>(); // name pra comunidade, único
 
+
     /**
      * Private constructor that loads saved data upon initialization.
      */
@@ -47,6 +48,35 @@ public class Repository implements Serializable {
 
     public void newCommunity(String name, Community community) {
         this.communities.put(name, community);
+    }
+
+    public Community getCommunityByName(String communityName) throws CommunityDoesntExistException {
+        Community community = this.communities.get(communityName);
+
+        if (community == null) {
+            throw new CommunityDoesntExistException();
+        }
+        return community;
+    }
+
+    public String getCommunityDescription(String communityName) throws CommunityDoesntExistException {
+        Community community = this.communities.get(communityName);
+
+        if (community == null) {
+            throw new CommunityDoesntExistException();
+        }
+
+        return community.getDescription();
+    }
+
+    public String getCommunityOwner(String communityName) throws CommunityDoesntExistException {
+        Community community = this.communities.get(communityName);
+
+        if (community == null) {
+            throw new CommunityDoesntExistException();
+        }
+
+        return community.getOwner();
     }
 
     /**
