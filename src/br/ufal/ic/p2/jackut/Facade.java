@@ -161,10 +161,18 @@ public class Facade {
     }
 
     public String getDonoComunidade(String nome) throws CommunityDoesntExistException {
-        return this.jackut.getCommunitOwner(nome);
+        return this.jackut.getCommunityOwner(nome);
     }
 
     public String getMembrosComunidade(String nome) throws CommunityDoesntExistException {
         return this.jackut.getMembrosComunidade(nome);
+    }
+
+    public String getComunidades(String login) throws UserNotFoundException {
+        return this.jackut.getCommunitiesByLogin(login);
+    }
+
+    public void adicionarComunidade(String sessao, String nome) throws UserNotFoundException, CommunityDoesntExistException, UserAlreadyCommunityMemberException {
+        this.jackut.addMemberToCommunity(sessao, nome);
     }
 }

@@ -3,6 +3,7 @@ package br.ufal.ic.p2.jackut;
 import br.ufal.ic.p2.jackut.Exceptions.*;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 /**
  * Classe principal do sistema Jackut, respons?vel por gerenciar usu?rios, sess?es, amizades e mensagens.
@@ -192,8 +193,10 @@ public class Jackut implements Serializable {
         }
 
         User owner = this.repository.getUserBySessionId(sessionId);
-
         Community newCommunity = new Community(name, descricao, owner);
+
+        newCommunity.addMember(owner);
+
         this.repository.newCommunity(name, newCommunity);
     }
 
@@ -201,7 +204,7 @@ public class Jackut implements Serializable {
         return this.repository.getCommunityDescription(communityName);
     }
 
-    public String getCommunitOwner(String communityName) throws CommunityDoesntExistException{
+    public String getCommunityOwner(String communityName) throws CommunityDoesntExistException{
         return this.repository.getCommunityOwner(communityName);
     }
 
@@ -209,7 +212,22 @@ public class Jackut implements Serializable {
         Community community = this.repository.getCommunityByName(communityName);
 
         return "{" + String.join(",", community.getMembers()) + "}";
+    }
 
+    public String getCommunitiesByLogin(String ownerLogin) throws  UserNotFoundException {
+        ArrayList<String> communities = this.repository.getCommunitiesByLogin(ownerLogin);
 
+        return "{" + String.join(",", communities) + "}";
+    }
+
+    public void addMemberToCommunity(String session, String communityName) throws UserNotFoundException, CommunityDoesntExistException, UserAlreadyCommunityMemberException {
+        User newMember = this.repository.getUserBySessionId(session);
+        Community community = this.repository.getCommunityByName(communityName);
+
+        if(community.isAlreadyMember(newMember)) {
+            throw new UserAlreadyCommunityMemberException();
+        }
+
+        community.addMember(newMember);
     }
 }

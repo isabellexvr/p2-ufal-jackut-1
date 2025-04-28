@@ -47,6 +47,7 @@ public class Repository implements Serializable {
     }
 
     public void newCommunity(String name, Community community) {
+
         this.communities.put(name, community);
     }
 
@@ -77,6 +78,16 @@ public class Repository implements Serializable {
         }
 
         return community.getOwner();
+    }
+
+    public ArrayList<String> getCommunitiesByLogin(String userLogin) throws UserNotFoundException {
+        User user = this.users.get(userLogin);
+
+        if (user == null) {
+            throw new UserNotFoundException();
+        }
+
+        return user.getCommunities();
     }
 
     /**

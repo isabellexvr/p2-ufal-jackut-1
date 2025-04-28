@@ -17,6 +17,8 @@ public class User implements Serializable {
     private Map<String, String> atributosExtras;
     private Repository repository;
     private Queue<Message> messages;
+    private ArrayList<String> communities;
+    private static final long serialVersionUID = -8830410604829432853L;
 
     /**
      * Constructs a User with the given login, password, and name.
@@ -32,6 +34,7 @@ public class User implements Serializable {
         this.messages = new LinkedList<>();
         this.atributosExtras = new HashMap<>();
         this.repository = Repository.getInstance();
+        this.communities = new ArrayList<>();
     }
 
     /**
@@ -188,5 +191,13 @@ public class User implements Serializable {
             throw new NoMessagesException();
         }
         return messages.poll().getText();
+    }
+
+    public void addCommunity(String community) {
+        this.communities.add(community);
+    }
+
+    public ArrayList<String> getCommunities() {
+        return communities;
     }
 }

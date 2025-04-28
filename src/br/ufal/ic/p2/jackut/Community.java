@@ -13,7 +13,6 @@ public class Community implements Serializable {
         this.description = description;
         this.owner = owner;
         this.members = new ArrayList<User>();
-        members.add(owner);
     }
 
     public String getName() {
@@ -24,6 +23,10 @@ public class Community implements Serializable {
         return description;
     }
 
+    public User getOwnerUser(){
+        return owner;
+    }
+
     public String getOwner() {
         return owner.getLogin();
     }
@@ -32,11 +35,19 @@ public class Community implements Serializable {
         ArrayList<String> membersLogins = new ArrayList<>();
 
         for (User user : members) {
-            //System.out.println(user.getLogin());
             membersLogins.add(user.getLogin());
         }
 
         return membersLogins;
+    }
+
+    public Boolean isAlreadyMember(User user) {
+        return members.contains(user);
+    }
+
+    public void addMember(User user) {
+        user.addCommunity(this.name);
+        members.add(user);
     }
 
 
