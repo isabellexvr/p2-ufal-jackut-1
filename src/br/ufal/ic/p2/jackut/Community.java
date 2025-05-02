@@ -23,10 +23,6 @@ public class Community implements Serializable {
         return description;
     }
 
-    public User getOwnerUser(){
-        return owner;
-    }
-
     public String getOwner() {
         return owner.getLogin();
     }
@@ -39,6 +35,12 @@ public class Community implements Serializable {
         }
 
         return membersLogins;
+    }
+
+    public void sendMessageToMembers(CommunityMessage message){
+        for (User user : members) {
+            user.addCommunityMessage(message);
+        }
     }
 
     public Boolean isAlreadyMember(User user) {

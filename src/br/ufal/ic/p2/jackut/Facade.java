@@ -2,8 +2,6 @@ package br.ufal.ic.p2.jackut;
 
 import br.ufal.ic.p2.jackut.Exceptions.*;
 
-import java.util.Set;
-
 /**
  * Classe de fachada para o sistema Jackut.
  * Responsável por fornecer métodos de acesso ao sistema.
@@ -98,7 +96,7 @@ public class Facade {
      * @throws Exception                 Outras exceções genéricas.
      */
     public void adicionarAmigo(String id, String amigo)
-            throws Exception, UserNotFoundException, WaitingToAcceptException, AlreadyFriendException {
+            throws Exception, UserNotFoundException, WaitingToAcceptException, AlreadyFriendException, InvalidFunctionEnemyException {
         this.jackut.addFriend(id, amigo);
     }
 
@@ -109,7 +107,7 @@ public class Facade {
      * @return Uma String representando os amigos do usuário.
      * @throws UserNotFoundException Se o usuário não for encontrado.
      */
-    public String getAmigos(String login) throws UserNotFoundException {
+    public String getAmigos(String login)  {
         return this.jackut.getFriends(login);
     }
 
@@ -135,7 +133,7 @@ public class Facade {
      * @throws UserNotFoundException      Se o destinatário não for encontrado.
      */
     public void enviarRecado(String id, String destinatario, String mensagem)
-            throws CantMessageItselfException, UserNotFoundException {
+            throws CantMessageItselfException, UserNotFoundException, InvalidFunctionEnemyException {
         this.jackut.sendMessage(id, destinatario, mensagem);
     }
 
@@ -175,4 +173,47 @@ public class Facade {
     public void adicionarComunidade(String sessao, String nome) throws UserNotFoundException, CommunityDoesntExistException, UserAlreadyCommunityMemberException {
         this.jackut.addMemberToCommunity(sessao, nome);
     }
+
+    public String lerMensagem(String id) throws UserNotFoundException, NoCommunityMessagesException, NoMessagesException {
+        return this.jackut.getMessage(id);
+    }
+
+    public void enviarMensagem(String id, String comunidade, String mensagem) throws UserNotFoundException, CommunityDoesntExistException {
+        this.jackut.sendCommunityMessage(id, comunidade, mensagem);
+    }
+
+    public boolean ehFa(String login, String idolo) throws UserNotFoundException{
+        return this.jackut.isFan(login, idolo);
+    }
+
+    public void adicionarIdolo(String id, String idolo) throws UserNotFoundException, SelfFanException, InvalidFunctionEnemyException {
+        this.jackut.follow(id, idolo);
+    }
+
+    public String getFas(String login) throws UserNotFoundException {
+        return this.jackut.getFollowers(login);
+    }
+
+    public boolean ehPaquera(String id, String paquera) throws UserNotFoundException {
+        return this.jackut.isCrush(id, paquera);
+    }
+
+    public void adicionarPaquera(String id, String paquera) throws UserNotFoundException, AlreadyCrushException,
+            CrushItselfException, InvalidFunctionEnemyException {
+        this.jackut.addCrush(id, paquera);
+    }
+
+    public String getPaqueras(String id) throws UserNotFoundException {
+        return this.jackut.getCrushes(id);
+    }
+
+    public void adicionarInimigo(String id, String inimigo) throws UserNotFoundException, AlreadyEnemyException, SelfEnemyException {
+        this.jackut.addEnemy(id, inimigo);
+    }
+
+    public void removerUsuario(String id) throws UserNotFoundException {
+        this.jackut.removeUser(id);
+    }
+
+
 }

@@ -15,6 +15,7 @@ public class Repository implements Serializable {
     private static final long serialVersionUID = 1L;
     private static final String USERS_FILE = "jackut_users.dat";
     private static final String SESSIONS_FILE = "jackut_sessions.dat";
+    private static final String COMMUNITIES_FILE = "jackut_communities.dat";
 
     private static Repository instance; // Singleton instance
 
@@ -43,11 +44,11 @@ public class Repository implements Serializable {
     }
 
     public boolean isCommunityCreated(String communityName) {
-        return communities.containsKey(communityName);
+        Community community = communities.get(communityName);
+        return community != null;
     }
 
     public void newCommunity(String name, Community community) {
-
         this.communities.put(name, community);
     }
 
@@ -83,8 +84,13 @@ public class Repository implements Serializable {
     public ArrayList<String> getCommunitiesByLogin(String userLogin) throws UserNotFoundException {
         User user = this.users.get(userLogin);
 
+        if(Objects.equals(userLogin, "")){
+            throw new UserNotFoundException();
+        }
+
         if (user == null) {
             throw new UserNotFoundException();
+
         }
 
         return user.getCommunities();
@@ -158,10 +164,13 @@ public class Repository implements Serializable {
     public void eraseEverything() {
         users.clear();
         sessions.clear();
+        communities.clear();
         new File(USERS_FILE).delete();
         new File(SESSIONS_FILE).delete();
+        new File(COMMUNITIES_FILE).delete();
         saveData();
     }
+
 
     /**
      * Saves users and sessions to their respective files.
@@ -169,6 +178,7 @@ public class Repository implements Serializable {
     public void saveData() {
         saveToFile(USERS_FILE, users);
         saveToFile(SESSIONS_FILE, sessions);
+        saveToFile(COMMUNITIES_FILE, communities);
     }
 
     /**
@@ -238,9 +248,11 @@ public class Repository implements Serializable {
     }
 
     private void loadData() {
-        users = loadFromFile(USERS_FILE, new HashMap<String, User>());
-        sessions = loadFromFile(SESSIONS_FILE, new HashMap<String, Session>());
+        users = loadFromFile(USERS_FILE, new HashMap<>());
+        sessions = loadFromFile(SESSIONS_FILE, new HashMap<>());
+        communities = loadFromFile(COMMUNITIES_FILE, new HashMap<>());
     }
+
 
 
     /**
@@ -255,5 +267,39 @@ public class Repository implements Serializable {
             throw new UserNotFoundException();
         }
         return users.get(login);
+    }
+
+    public void deleteUser(String login) throws UserNotFoundException {
+        if (!users.containsKey(login)) {
+            throw new UserNotFoundException();
+        }
+
+        users.remove(login);
+        sessions.remove(login);
+
+        ArrayList<String> removedCommunities = new ArrayList<>();
+
+        for (Map.Entry<String, Community> entry : communities.entrySet()) {
+            Community community = entry.getValue();
+
+            if(community.getOwner().equals(login)) {
+                communities.remove(community.getName());
+                removedCommunities.add(community.getName());
+            }
+        }
+
+        for (String communityName : removedCommunities) {
+            for (Map.Entry<String, User> entry : users.entrySet()) {
+                User user = entry.getValue();
+                user.removeCommunity(communityName);
+            }
+        }
+
+        for (Map.Entry<String, User> entry : users.entrySet()) {
+            User user = entry.getValue();
+
+            user.getMessages().removeIf(msg -> msg.getSender().getLogin().equals(login));
+        }
+
     }
 }

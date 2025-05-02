@@ -13,11 +13,21 @@ public class User implements Serializable {
     private String login;
     private String password;
     private String name;
-    private List<String> friends;
     private Map<String, String> atributosExtras;
+
+    private List<String> friends;
+    private List<String> follows;
+    private List<String> followers;
+    private List<String> crushes;
+    private List<String> enemies;
+
     private Repository repository;
+
     private Queue<Message> messages;
+    private Queue<CommunityMessage> communityMessages;
+
     private ArrayList<String> communities;
+
     private static final long serialVersionUID = -8830410604829432853L;
 
     /**
@@ -35,6 +45,11 @@ public class User implements Serializable {
         this.atributosExtras = new HashMap<>();
         this.repository = Repository.getInstance();
         this.communities = new ArrayList<>();
+        this.communityMessages = new LinkedList<>();
+        this.enemies = new ArrayList<>();
+        this.follows = new ArrayList<>();
+        this.followers = new ArrayList<>();
+        this.crushes = new ArrayList<>();
     }
 
     /**
@@ -193,11 +208,66 @@ public class User implements Serializable {
         return messages.poll().getText();
     }
 
+    public String getFirstCommunityMessage() throws NoCommunityMessagesException {
+        if(communityMessages.isEmpty()) {
+            throw new NoCommunityMessagesException();
+        }
+        return communityMessages.poll().getMessage();
+    }
+
+    public void addCommunityMessage(CommunityMessage message) {
+        communityMessages.add(message);
+    }
+
     public void addCommunity(String community) {
         this.communities.add(community);
     }
 
     public ArrayList<String> getCommunities() {
         return communities;
+    }
+
+    public boolean doesUserFollow(String idolLogin){
+        return follows.contains(idolLogin);
+    }
+
+    public void follow(String idolLogin) {
+        this.follows.add(idolLogin);
+    }
+
+    public List<String> getFollowers() {
+        return followers;
+    }
+
+    public void setFollower(String fanId) {
+        this.followers.add(fanId);
+    }
+
+    public boolean isCrush(String crushLogin) {
+        return crushes.contains(crushLogin);
+    }
+
+    public void addCrush(String crushLogin) {
+        this.crushes.add(crushLogin);
+    }
+
+    public List<String> getCrushes(){
+        return this.crushes;
+    }
+
+    public void addEnemy(String login){
+        this.enemies.add(login);
+    }
+
+    public boolean isEnemy(String login){
+        return this.enemies.contains(login);
+    }
+
+    public void removeCommunity(String community) {
+        this.communities.remove(community);
+    }
+
+    public Queue<Message> getMessages() {
+        return messages;
     }
 }

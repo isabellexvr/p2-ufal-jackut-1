@@ -10,9 +10,9 @@ public class Message implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private User senderSessionId;  // Usuário que enviou a mensagem
-    private User receiverLogin;    // Usuário que recebeu a mensagem
-    private String text;           // Conteúdo da mensagem
+    private User senderSessionId;
+    private User receiverLogin;
+    private String text;
 
     /**
      * Constrói uma mensagem com um remetente, destinatário e conteúdo.

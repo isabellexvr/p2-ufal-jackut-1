@@ -102,11 +102,17 @@ public class Jackut implements Serializable {
      * @throws AlreadyFriendException Se j? forem amigos.
      * @throws WaitingToAcceptException Se h? uma solicita??o pendente.
      */
-    public void addFriend(String userSessionId, String friendLogin) throws UserNotFoundException, AlreadyFriendException, WaitingToAcceptException, CantAddItselfException {
+    public void addFriend(String userSessionId, String friendLogin) throws UserNotFoundException,
+            AlreadyFriendException, WaitingToAcceptException, CantAddItselfException, InvalidFunctionEnemyException {
         User user = this.repository.getUserBySessionId(userSessionId);
+        User possibleFriend = repository.getUser(friendLogin);
 
         if (user.isFriend(friendLogin)) {
             throw new AlreadyFriendException();
+        }
+
+        if(user.isEnemy(friendLogin) || possibleFriend.isEnemy(user.getLogin())) {
+            throw new InvalidFunctionEnemyException(possibleFriend.getName());
         }
         user.addFriend(friendLogin);
     }
@@ -148,10 +154,16 @@ public class Jackut implements Serializable {
      * @return Lista de amigos formatada como uma string.
      * @throws UserNotFoundException Se o usu?rio n?o for encontrado.
      */
-    public String getFriends(String login) throws UserNotFoundException {
-        User user = this.repository.getUser(login);
-        return "{" + String.join(",", user.getFriends()) + "}";
+    public String getFriends(String login) {
+        try {
+            User user = this.repository.getUser(login);
+            return "{" + String.join(",", user.getFriends()) + "}";
+        } catch (UserNotFoundException e) {
+            System.out.println("oporra");
+            return "{}";
+        }
     }
+
 
     /**
      * Envia uma mensagem para outro usu?rio.
@@ -162,12 +174,17 @@ public class Jackut implements Serializable {
      * @throws UserNotFoundException Se o remetente ou destinat?rio n?o for encontrado.
      * @throws CantMessageItselfException Se o usu?rio tentar enviar uma mensagem para si mesmo.
      */
-    public void sendMessage(String sessionId, String receiverLogin, String message) throws UserNotFoundException, CantMessageItselfException {
+    public void sendMessage(String sessionId, String receiverLogin, String message) throws InvalidFunctionEnemyException, UserNotFoundException,
+            CantMessageItselfException {
         User sender = this.repository.getUserBySessionId(sessionId);
         User receiver = this.repository.getUser(receiverLogin);
 
         if (sender.getLogin().equals(receiverLogin)) {
             throw new CantMessageItselfException();
+        }
+
+        if(sender.isFriend(receiverLogin) || receiver.isEnemy((sender.getLogin()))) {
+            throw new InvalidFunctionEnemyException(receiver.getName());
         }
 
         Message m = new Message(sender, receiver, message);
@@ -230,4 +247,122 @@ public class Jackut implements Serializable {
 
         community.addMember(newMember);
     }
+
+    public String getMessage(String sessionId) throws UserNotFoundException, NoMessagesException, NoCommunityMessagesException {
+        User user = this.repository.getUserBySessionId(sessionId);
+
+        return user.getFirstCommunityMessage();
+    }
+
+    public void sendCommunityMessage(String sessionId, String communityName, String message) throws UserNotFoundException, CommunityDoesntExistException {
+        Community community = this.repository.getCommunityByName(communityName);
+        User sender = this.repository.getUserBySessionId(sessionId);
+
+        CommunityMessage communityMessage = new CommunityMessage(sender, community, message);
+
+        community.sendMessageToMembers(communityMessage);
+    }
+
+    public boolean isFan(String fanLogin, String idolLogin) throws UserNotFoundException {
+        User fan = this.repository.getUser(fanLogin);
+
+        return fan.doesUserFollow(idolLogin);
+    }
+
+    public void follow(String userId, String idolLogin) throws UserNotFoundException, SelfFanException, InvalidFunctionEnemyException {
+        User user = this.repository.getUserBySessionId(userId);
+        User idol = this.repository.getUser(idolLogin);
+
+        if(user.doesUserFollow(idolLogin)) {
+            throw new AlreadyFollowsException();
+        }
+
+        if(user.getLogin().equals(idolLogin)) {
+            throw new SelfFanException();
+        }
+
+        if(user.isEnemy(idolLogin) || idol.isEnemy(user.getLogin())) {
+            throw new InvalidFunctionEnemyException(idol.getName());
+        }
+        user.follow(idolLogin);
+        idol.setFollower(user.getLogin());
+    }
+
+    public String getFollowers(String userLogin) throws UserNotFoundException {
+        User user = this.repository.getUser(userLogin);
+        return "{" + String.join(",", user.getFollowers()) + "}";
+    }
+
+    public boolean isCrush(String userId, String crushLogin) throws UserNotFoundException {
+        User user = this.repository.getUserBySessionId(userId);
+
+        return user.isCrush(crushLogin);
+    }
+
+    public void addCrush(String userId, String crushLogin) throws UserNotFoundException, AlreadyCrushException,
+            CrushItselfException, InvalidFunctionEnemyException {
+        User user = this.repository.getUserBySessionId(userId);
+        User crush = this.repository.getUser(crushLogin);
+
+        if(user.isCrush(crushLogin)) {
+            throw new AlreadyCrushException();
+        }
+
+        if (user.getLogin().equals(crushLogin)) {
+            throw new CrushItselfException();
+        }
+
+        if(user.isEnemy(crushLogin) || crush.isEnemy(user.getLogin())) {
+            throw new InvalidFunctionEnemyException(crush.getName());
+        }
+
+        user.addCrush(crushLogin);
+
+        if(user.isCrush(crushLogin) && crush.isCrush(user.getLogin())) {
+            String stringMsg = String.format("%s é seu paquera - Recado do Jackut.", user.getName());
+            Message msg = new Message(user, crush, stringMsg);
+            crush.addMessage(msg);
+
+            String anotherStringMsg = String.format("%s é seu paquera - Recado do Jackut.", crush.getName());
+            Message anotherMsg = new Message(crush, user, anotherStringMsg);
+            user.addMessage(anotherMsg);
+        }
+
+    }
+
+    public String getCrushes(String userId) throws UserNotFoundException {
+        User user = this.repository.getUserBySessionId(userId);
+
+        return "{" + String.join(",", user.getCrushes()) + "}";
+    }
+
+    //Regras: um usuário pode informar ao Jackut
+    // que outro usuário é seu inimigo; um inimigo não
+    // pode lhe adicionar como amigo, paquera ou fã, e todas as
+    // mensagens que chegam dele são automaticamente descartadas
+
+
+    public void addEnemy(String sesisonId, String enemyLogin) throws UserNotFoundException, AlreadyEnemyException, SelfEnemyException{
+        User user = this.repository.getUserBySessionId(sesisonId);
+        User enemy = this.repository.getUser(enemyLogin);
+
+        if(user.isEnemy(enemyLogin)){
+            throw new AlreadyEnemyException();
+        }
+
+        if(user.getLogin().equals(enemyLogin)){
+            throw new SelfEnemyException();
+        }
+
+        user.addEnemy(enemyLogin);
+    }
+
+    // Remoção de conta - Permita a um usuário encerrar sua conta no Jackut.
+    // Todas as suas informações devem sumir do sistema: relacionamentos, mensagens enviadas, perfil.
+
+    public void removeUser(String userId) throws UserNotFoundException {
+        User user = this.repository.getUserBySessionId(userId);
+        this.repository.deleteUser(user.getLogin());
+    }
+
 }
