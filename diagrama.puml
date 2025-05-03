@@ -1,0 +1,128 @@
+@startuml
+!define RECTANGLE class
+
+' Main Class Definitions
+RECTANGLE User {
+  - login: String
+  - name: String
+  - password: String
+  - messages: Queue<Message>
+  - communityMessages: Queue<CommunityMessage>
+  - friends: List<String>
+  - enemies: List<String>
+  - followers: List<String>
+  - crushes: List<String>
+  - communities: List<String>
+  + addMessage(m: Message): void
+  + addCommunityMessage(m: CommunityMessage): void
+  + getMessages(): Queue<Message>
+  + getFirstMessage(): String
+  + getFirstCommunityMessage(): String
+  + isFriend(login: String): boolean
+  + isEnemy(login: String): boolean
+  + doesUserFollow(login: String): boolean
+  + isCrush(login: String): boolean
+  + addFriend(login: String): void
+  + addEnemy(login: String): void
+  + follow(login: String): void
+  + addCrush(login: String): void
+  + addCommunity(name: String): void
+  + removeCommunity(name: String): void
+  + getFriends(): List<String>
+  + getCrushes(): List<String>
+  + getFollowers(): List<String>
+  + getCommunities(): List<String>
+}
+
+RECTANGLE Community {
+  - name: String
+  - description: String
+  - owner: User
+  - members: List<User>
+  + getName(): String
+  + getDescription(): String
+  + getOwner(): String
+  + getMembers(): List<String>
+  + addMember(user: User): void
+  + isAlreadyMember(user: User): boolean
+  + sendMessageToMembers(m: CommunityMessage): void
+}
+
+RECTANGLE Message {
+  - senderSessionId: String
+  - receiverLogin: String
+  - text: String
+  - sender: User
+  + getText(): String
+  + getSenderSessionId(): String
+  + getSender(): User
+  + getReceiver(): String
+}
+
+RECTANGLE CommunityMessage {
+  - sender: User
+  - community: Community
+  - message: String
+  + getSender(): User
+  + getCommunity(): Community
+  + getMessage(): String
+}
+
+RECTANGLE Jackut {
+  - repository: Repository
+  + createUser(login: String, password: String, name: String): void
+  + newSession(login: String, password: String): String
+  + addFriend(sessionId: String, friendLogin: String): void
+  + sendMessage(sessionId: String, receiverLogin: String, message: String): void
+  + sendCommunityMessage(sessionId: String, communityName: String, message: String): void
+  + createCommunity(sessionId: String, name: String, description: String): void
+  + follow(userId: String, idolLogin: String): void
+  + addCrush(userId: String, crushLogin: String): void
+  + addEnemy(sessionId: String, enemyLogin: String): void
+  + removeUser(userId: String): void
+  + resetSystem(): void
+  + endSystem(): void
+}
+
+RECTANGLE Repository {
+  - users: Map<String, User>
+  - sessions: Map<String, Session>
+  - communities: Map<String, Community>
+  + getUser(login: String): User
+  + getUserBySessionId(sessionId: String): User
+  + getCommunity(name: String): Community
+  + newSession(login: String, password: String): Session
+  + addUser(login: String, password: String, name: String): void
+  + deleteUser(login: String): void
+  + newCommunity(name: String, community: Community): void
+  + isCommunityCreated(name: String): boolean
+  + saveData(): void
+  + eraseEverything(): void
+}
+
+RECTANGLE Session {
+  - id: String
+  - user: User
+  + getId(): String
+  + getUser(): User
+}
+
+' Relationships
+User "1" *-- "0..*" Message : sends
+User "1" *-- "0..*" CommunityMessage : receives
+User "1" *-- "0..*" User : friends with
+User "1" *-- "0..*" User : enemies with
+User "1" *-- "0..*" User : follows
+User "1" *-- "0..*" User : crushes on
+
+Community "1" *-- "1" User : owned by
+Community "1" *-- "0..*" User : has members
+Community "1" *-- "0..*" CommunityMessage : generates
+
+Jackut "1" *-- "1" Repository : uses
+Repository "1" *-- "0..*" User : contains
+Repository "1" *-- "0..*" Community : contains
+Repository "1" *-- "0..*" Session : contains
+
+Session "1" *-- "1" User : represents
+@enduml
