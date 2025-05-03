@@ -3,18 +3,18 @@ package br.ufal.ic.p2.jackut;
 import java.io.Serializable;
 
 /**
- * Representa uma sessão de um usuário no sistema Jackut.
- * Cada sessão é identificada por um ID único e está associada a um usuário específico.
+ * Represents a user session in the Jackut system.
+ * Each session is identified by a unique ID and is associated with a specific user.
  */
 public class Session implements Serializable {
     private String id;
     private User user;
 
     /**
-     * Constrói uma nova sessão para um usuário.
+     * Constructs a new session for a user.
      *
-     * @param id   O identificador único da sessão.
-     * @param user O usuário associado a esta sessão.
+     * @param id   The unique session identifier.
+     * @param user The user associated with this session.
      */
     public Session(String id, User user) {
         this.id = id;
@@ -22,18 +22,18 @@ public class Session implements Serializable {
     }
 
     /**
-     * Obtém o usuário associado a esta sessão.
+     * Gets the user associated with this session.
      *
-     * @return O usuário desta sessão.
+     * @return The session's user.
      */
     public User getUser() {
         return user;
     }
 
     /**
-     * Obtém o identificador único desta sessão.
+     * Gets the unique identifier of this session.
      *
-     * @return O ID da sessão.
+     * @return The session ID.
      */
     public String getId() {
         return id;

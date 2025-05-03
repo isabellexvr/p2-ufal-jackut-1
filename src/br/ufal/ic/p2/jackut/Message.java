@@ -3,54 +3,66 @@ package br.ufal.ic.p2.jackut;
 import java.io.Serializable;
 
 /**
- * Representa uma mensagem enviada de um usuário para outro no sistema Jackut.
- * Esta classe implementa {@link Serializable} para permitir a persistência de mensagens.
+ * Represents a message sent from one user to another in the Jackut system.
+ * This class implements {@link Serializable} to allow message persistence.
  */
 public class Message implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private User senderSessionId;
-    private User receiverLogin;
+    private String senderSessionId;
+    private User sender;
+    private String receiverLogin;
     private String text;
 
     /**
-     * Constrói uma mensagem com um remetente, destinatário e conteúdo.
+     * Constructs a message with sender, receiver, and content.
      *
-     * @param senderSessionId O usuário que enviou a mensagem.
-     * @param receiverLogin O usuário que receberá a mensagem.
-     * @param text O conteúdo da mensagem.
+     * @param senderSessionId The session ID of the user who sent the message.
+     * @param receiverLogin The login of the user who will receive the message.
+     * @param text The content of the message.
+     * @param sender The User object representing the sender.
      */
-    public Message(User senderSessionId, User receiverLogin, String text) {
+    public Message(String senderSessionId, String receiverLogin, String text, User sender) {
         this.senderSessionId = senderSessionId;
         this.receiverLogin = receiverLogin;
+        this.sender = sender;
         this.text = text;
     }
 
     /**
-     * Obtém o conteúdo da mensagem.
+     * Gets the message content.
      *
-     * @return O texto da mensagem.
+     * @return The message text.
      */
     public String getText() {
         return text;
     }
 
     /**
-     * Obtém o usuário que enviou a mensagem.
+     * Gets the session ID of the user who sent the message.
      *
-     * @return O remetente da mensagem.
+     * @return The sender's session ID.
      */
-    public User getSender() {
+    public String getSenderSessionId() {
         return senderSessionId;
     }
 
     /**
-     * Obtém o usuário que recebeu a mensagem.
+     * Gets the User object representing the sender.
      *
-     * @return O destinatário da mensagem.
+     * @return The sender User object.
      */
-    public User getReceiver() {
+    public User getSender() {
+        return sender;
+    }
+
+    /**
+     * Gets the login of the user who received the message.
+     *
+     * @return The receiver's login.
+     */
+    public String getReceiver() {
         return receiverLogin;
     }
 }

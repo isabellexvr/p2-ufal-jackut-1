@@ -59,77 +59,16 @@ public class User implements Serializable {
     public String getLogin() { return login; }
 
     /**
-     * Gets the user's password.
-     * @return The user's password.
-     */
-    public String getPassword() { return password; }
-
-    /**
      * Gets the user's name.
      * @return The user's name.
      */
     public String getName() { return name; }
 
     /**
-     * Retrieves the list of confirmed friends.
-     * @return A list of confirmed friends.
-     * @throws UserNotFoundException If a friend is not found in the repository.
+     * Gets the user's password.
+     * @return The user's password.
      */
-    public List<String> getFriends() throws UserNotFoundException {
-        List<String> finalFriends = new ArrayList<>();
-        for (String friend : friends) {
-            User user = this.repository.getUser(friend);
-            if (user.friends.contains(this.login)) {
-                finalFriends.add(friend);
-            }
-        }
-        return finalFriends;
-    }
-
-    /**
-     * Adds a friend request.
-     * @param friendLogin The login of the friend to be added.
-     * @throws CantAddItselfException If the user tries to add themselves.
-     * @throws UserNotFoundException If the friend does not exist.
-     * @throws WaitingToAcceptException If the friend request is pending.
-     * @throws AlreadyFriendException If the users are already friends.
-     */
-    public void addFriend(String friendLogin) throws CantAddItselfException, UserNotFoundException, WaitingToAcceptException, AlreadyFriendException {
-        if (friendLogin.equals(this.login)) {
-            throw new CantAddItselfException();
-        }
-
-        User possibleFriend = this.repository.getUser(friendLogin);
-
-        if (friends.contains(friendLogin)) {
-            if (!possibleFriend.friends.contains(this.login)) {
-                throw new WaitingToAcceptException();
-            }
-            throw new AlreadyFriendException();
-        }
-        friends.add(friendLogin);
-        this.repository.saveData();
-    }
-
-    /**
-     * Checks if another user is a confirmed friend.
-     * @param friendLogin The friend's login.
-     * @return True if they are friends, false otherwise.
-     * @throws UserNotFoundException If the friend is not found.
-     */
-    public boolean isFriend(String friendLogin) throws UserNotFoundException {
-        User possibleFriend = this.repository.getUser(friendLogin);
-        return friends.contains(friendLogin) && possibleFriend.friends.contains(this.login);
-    }
-
-    /**
-     * Receives a message from another user.
-     * @param sender The sender user.
-     * @param text The message text.
-     */
-    public void receiveMessage(User sender, String text) {
-        messages.add(new Message(sender, this, text));
-    }
+    public String getPassword() { return password; }
 
     /**
      * Retrieves a specific user attribute.
@@ -158,24 +97,64 @@ public class User implements Serializable {
     }
 
     /**
-     * Removes an attribute.
-     * @param chave The attribute key to remove.
-     * @throws EmptyAttributeException If the attribute does not exist.
+     * Adds a friend request.
+     * @param friendLogin The login of the friend to be added.
+     * @throws CantAddItselfException If the user tries to add themselves.
+     * @throws UserNotFoundException If the friend does not exist.
+     * @throws WaitingToAcceptException If the friend request is pending.
+     * @throws AlreadyFriendException If the users are already friends.
      */
-    public void removeAtributo(String chave) throws EmptyAttributeException {
-        if (atributosExtras.containsKey(chave)) {
-            atributosExtras.remove(chave);
-        } else {
-            throw new EmptyAttributeException();
+    public void addFriend(String friendLogin) throws CantAddItselfException, UserNotFoundException, WaitingToAcceptException, AlreadyFriendException {
+        if (friendLogin.equals(this.login)) {
+            throw new CantAddItselfException();
         }
+
+        User possibleFriend = this.repository.getUser(friendLogin);
+
+        if (friends.contains(friendLogin)) {
+            if (!possibleFriend.friends.contains(this.login)) {
+                throw new WaitingToAcceptException();
+            }
+            throw new AlreadyFriendException();
+        }
+        friends.add(friendLogin);
+        this.repository.saveData();
     }
 
     /**
-     * Sends a message to another user.
-     * @param message The message to send.
+     * Retrieves the list of confirmed friends.
+     * @return A list of confirmed friends.
+     * @throws UserNotFoundException If a friend is not found in the repository.
      */
-    public void sendMessage(Message message) {
-        message.getReceiver().addMessage(message);
+    public List<String> getFriends() throws UserNotFoundException {
+        List<String> finalFriends = new ArrayList<>();
+        for (String friend : friends) {
+            User user = this.repository.getUser(friend);
+            if (user.friends.contains(this.login)) {
+                finalFriends.add(friend);
+            }
+        }
+        return finalFriends;
+    }
+
+    /**
+     * Checks if another user is a confirmed friend.
+     * @param friendLogin The friend's login.
+     * @return True if they are friends, false otherwise.
+     * @throws UserNotFoundException If the friend is not found.
+     */
+    public boolean isFriend(String friendLogin) throws UserNotFoundException {
+        User possibleFriend = this.repository.getUser(friendLogin);
+        return friends.contains(friendLogin) && possibleFriend.friends.contains(this.login);
+    }
+
+    public void removeFriend(String friendLogin) {
+        friends.remove(friendLogin);
+    }
+
+    public void removeMessages() {
+        messages = new LinkedList<>();
+        communityMessages = new LinkedList<>();
     }
 
     /**
@@ -184,16 +163,6 @@ public class User implements Serializable {
      */
     public void addMessage(Message message) {
         messages.add(message);
-    }
-
-    /**
-     * Prints all messages received by the user.
-     */
-    public void printAllMessages() {
-        for (Message message : messages) {
-            System.out.println("Mensagem de " + message.getSender().getName() + " para " + message.getReceiver().getName());
-            System.out.println(message.getText());
-        }
     }
 
     /**
@@ -208,66 +177,139 @@ public class User implements Serializable {
         return messages.poll().getText();
     }
 
+    /**
+     * Retrieves the first community message from the queue.
+     * @return The text of the first community message.
+     * @throws NoCommunityMessagesException If there are no community messages.
+     */
     public String getFirstCommunityMessage() throws NoCommunityMessagesException {
-        if(communityMessages.isEmpty()) {
+        if (communityMessages.isEmpty()) {
             throw new NoCommunityMessagesException();
         }
         return communityMessages.poll().getMessage();
     }
 
+    /**
+     * Adds a community message to the user's queue.
+     * @param message The community message to add.
+     */
     public void addCommunityMessage(CommunityMessage message) {
         communityMessages.add(message);
     }
 
+    /**
+     * Adds a community to the user's list of communities.
+     * @param community The community to add.
+     */
     public void addCommunity(String community) {
         this.communities.add(community);
     }
 
+    /**
+     * Gets the list of communities the user belongs to.
+     * @return List of community names.
+     */
     public ArrayList<String> getCommunities() {
-        return communities;
+        return new ArrayList<>(communities); // Retorna uma cópia para evitar modificações externas
     }
 
-    public boolean doesUserFollow(String idolLogin){
+    /**
+     * Checks if the user follows another user.
+     * @param idolLogin The login of the user to check.
+     * @return True if the user follows the specified user, false otherwise.
+     */
+    public boolean doesUserFollow(String idolLogin) {
         return follows.contains(idolLogin);
     }
 
+    /**
+     * Follows another user.
+     * @param idolLogin The login of the user to follow.
+     */
     public void follow(String idolLogin) {
         this.follows.add(idolLogin);
     }
 
+    /**
+     * Gets the list of followers.
+     * @return List of follower logins.
+     */
     public List<String> getFollowers() {
-        return followers;
+        return new ArrayList<>(followers); // Retorna uma cópia para evitar modificações externas
     }
 
+    /**
+     * Adds a follower to the user's list.
+     * @param fanId The login of the follower to add.
+     */
     public void setFollower(String fanId) {
         this.followers.add(fanId);
     }
 
+    /**
+     * Checks if another user is a crush.
+     * @param crushLogin The login of the user to check.
+     * @return True if the user is a crush, false otherwise.
+     */
     public boolean isCrush(String crushLogin) {
         return crushes.contains(crushLogin);
     }
 
+    /**
+     * Adds a crush to the user's list.
+     * @param crushLogin The login of the crush to add.
+     */
     public void addCrush(String crushLogin) {
         this.crushes.add(crushLogin);
     }
 
-    public List<String> getCrushes(){
-        return this.crushes;
+    /**
+     * Gets the list of crushes.
+     * @return List of crush logins.
+     */
+    public List<String> getCrushes() {
+        return new ArrayList<>(crushes); // Retorna uma cópia para evitar modificações externas
     }
 
-    public void addEnemy(String login){
+    /**
+     * Adds an enemy to the user's list.
+     * @param login The login of the enemy to add.
+     */
+    public void addEnemy(String login) {
         this.enemies.add(login);
     }
 
-    public boolean isEnemy(String login){
+    /**
+     * Checks if another user is an enemy.
+     * @param login The login of the user to check.
+     * @return True if the user is an enemy, false otherwise.
+     */
+    public boolean isEnemy(String login) {
         return this.enemies.contains(login);
     }
 
-    public void removeCommunity(String community) {
-        this.communities.remove(community);
+    /**
+     * Removes a community from the user's list.
+     * @param community The community to remove.
+     * @return True if the community was removed, false if it wasn't found.
+     */
+    public boolean removeCommunity(String community) {
+        return this.communities.remove(community);
     }
 
+    /**
+     * Gets the user's message queue.
+     * @return The message queue.
+     */
     public Queue<Message> getMessages() {
         return messages;
+    }
+
+    /**
+     * Gets the user's community message queue.
+     * @return The community message queue.
+     * */
+    public Queue<CommunityMessage> getCommunityMessages() {
+        return communityMessages;
     }
 }
