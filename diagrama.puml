@@ -70,34 +70,96 @@ RECTANGLE CommunityMessage {
 
 RECTANGLE Jackut {
   - repository: Repository
+  + resetSystem(): void
   + createUser(login: String, password: String, name: String): void
+  + getUserAttribute(login: String, attribute: String): String
   + newSession(login: String, password: String): String
-  + addFriend(sessionId: String, friendLogin: String): void
+  + endSystem(): void
+  + editProfile(id: String, attribute: String, value: String): void
+  + getFriends(login: String): String
+  + isFriend(login: String, friend: String): boolean
+  + addFriend(userSessionId: String, friendLogin: String): void
   + sendMessage(sessionId: String, receiverLogin: String, message: String): void
-  + sendCommunityMessage(sessionId: String, communityName: String, message: String): void
+  + getFirstMessage(sessionId: String): String
   + createCommunity(sessionId: String, name: String, description: String): void
+  + getCommunityDescription(communityName: String): String
+  + getCommunityOwner(communityName: String): String
+  + getCommunityMembers(communityName: String): String
+  + getCommunitiesByLogin(ownerLogin: String): String
+  + addMemberToCommunity(session: String, communityName: String): void
+  + getMessage(sessionId: String): String
+  + sendCommunityMessage(sessionId: String, communityName: String, message: String): void
+  + isFan(fanLogin: String, idolLogin: String): boolean
   + follow(userId: String, idolLogin: String): void
+  + getFollowers(userLogin: String): String
+  + isCrush(userId: String, crushLogin: String): boolean
   + addCrush(userId: String, crushLogin: String): void
+  + getCrushes(userId: String): String
   + addEnemy(sessionId: String, enemyLogin: String): void
   + removeUser(userId: String): void
+}
+
+RECTANGLE Facade {
+  - jackut: Jackut
   + resetSystem(): void
-  + endSystem(): void
+  + createUser(login: String, password: String, name: String): void
+  + getUserAttribute(login: String, attribute: String): String
+  + openSession(login: String, password: String): String
+  + shutdownSystem(): void
+  + editProfile(id: String, attribute: String, value: String): void
+  + addFriend(id: String, friend: String): void
+  + getFriends(login: String): String
+  + isFriend(login: String, friend: String): boolean
+  + sendMessage(id: String, recipient: String, message: String): void
+  + readMessage(sessionId: String): String
+  + createCommunity(session: String, name: String, description: String): void
+  + getCommunityDescription(name: String): String
+  + getCommunityOwner(name: String): String
+  + getCommunityMembers(name: String): String
+  + getUserCommunities(login: String): String
+  + addToCommunity(session: String, name: String): void
+  + readMessage(id: String): String
+  + sendCommunityMessage(id: String, community: String, message: String): void
+  + isFan(login: String, idol: String): boolean
+  + follow(id: String, idol: String): void
+  + getFollowers(login: String): String
+  + isCrush(id: String, crush: String): boolean
+  + addCrush(id: String, crush: String): void
+  + getCrushes(id: String): String
+  + addEnemy(id: String, enemy: String): void
+  + removeUser(id: String): void
 }
 
 RECTANGLE Repository {
+  - instance: Repository
   - users: Map<String, User>
   - sessions: Map<String, Session>
   - communities: Map<String, Community>
-  + getUser(login: String): User
-  + getUserBySessionId(sessionId: String): User
-  + getCommunity(name: String): Community
-  + newSession(login: String, password: String): Session
-  + addUser(login: String, password: String, name: String): void
-  + deleteUser(login: String): void
+  - USERS_FILE: String = "jackut_users.dat"
+  - SESSIONS_FILE: String = "jackut_sessions.dat"
+  - COMMUNITIES_FILE: String = "jackut_communities.dat"
+  - serialVersionUID: long = 1L
+
+  + getInstance(): Repository
+  + isCommunityCreated(communityName: String): boolean
   + newCommunity(name: String, community: Community): void
-  + isCommunityCreated(name: String): boolean
-  + saveData(): void
+  + getCommunityByName(communityName: String): Community
+  + getCommunityDescription(communityName: String): String
+  + getCommunityOwner(communityName: String): String
+  + getCommunitiesByLogin(userLogin: String): ArrayList<String>
+  + newSession(login: String, password: String): Session
+  + getSession(sessionId: String): Session
+  + getUserBySessionId(id: String): User
+  + addUser(login: String, password: String, name: String): void
   + eraseEverything(): void
+  + saveData(): void
+  + editProfile(session: Session, atributo: String, valor: String): void
+  + getUser(login: String): User
+  + deleteUser(login: String): void
+
+  - loadData(): void
+  - saveToFile(fileName: String, data: Object): void
+  - loadFromFile(fileName: String, defaultValue: T): T
 }
 
 RECTANGLE Session {
@@ -120,6 +182,7 @@ Community "1" *-- "0..*" User : has members
 Community "1" *-- "0..*" CommunityMessage : generates
 
 Jackut "1" *-- "1" Repository : uses
+Facade "1" *-- "1" Jackut : uses
 Repository "1" *-- "0..*" User : contains
 Repository "1" *-- "0..*" Community : contains
 Repository "1" *-- "0..*" Session : contains
