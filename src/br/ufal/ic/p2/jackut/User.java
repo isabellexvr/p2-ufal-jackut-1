@@ -6,29 +6,82 @@ import java.io.*;
 import java.util.*;
 
 /**
- * Represents a user in the Jackut system.
- * This class manages user data, friendships, and messages.
+ * Represents a user in the Jackut platform, storing login credentials, social connections,
+ * communities, and message queues.
  */
 public class User implements Serializable {
+
+    /**
+     * The user's login, used as a unique identifier.
+     */
     private String login;
+
+    /**
+     * The user's password for authentication.
+     */
     private String password;
+
+    /**
+     * The user's full name.
+     */
     private String name;
+
+    /**
+     * A map of custom attributes associated with the user.
+     * The key is the attribute name, and the value is the corresponding value.
+     */
     private Map<String, String> atributosExtras;
 
+    /**
+     * List of logins representing the user's friends.
+     */
     private List<String> friends;
+
+    /**
+     * List of logins of users this user follows.
+     */
     private List<String> follows;
+
+    /**
+     * List of logins of users who follow this user.
+     */
     private List<String> followers;
+
+    /**
+     * List of logins marked as crushes (romantic interests).
+     */
     private List<String> crushes;
+
+    /**
+     * List of logins marked as enemies.
+     */
     private List<String> enemies;
 
+    /**
+     * The repository object associated with this user for data access and persistence.
+     */
     private Repository repository;
 
+    /**
+     * Queue of private messages received by the user.
+     */
     private Queue<Message> messages;
+
+    /**
+     * Queue of community messages received by the user.
+     */
     private Queue<CommunityMessage> communityMessages;
 
+    /**
+     * List of names or identifiers of communities the user is part of.
+     */
     private ArrayList<String> communities;
 
+    /**
+     * Version identifier for serialization.
+     */
     private static final long serialVersionUID = -8830410604829432853L;
+
 
     /**
      * Constructs a User with the given login, password, and name.
@@ -148,13 +201,12 @@ public class User implements Serializable {
         return friends.contains(friendLogin) && possibleFriend.friends.contains(this.login);
     }
 
+    /**
+     * Removes a user from the current user's friend list.
+     * @param friendLogin The login of the friend to remove.
+     */
     public void removeFriend(String friendLogin) {
         friends.remove(friendLogin);
-    }
-
-    public void removeMessages() {
-        messages = new LinkedList<>();
-        communityMessages = new LinkedList<>();
     }
 
     /**

@@ -11,6 +11,9 @@ import java.util.ArrayList;
  * Implements Serializable to support system persistence.
  */
 public class Jackut implements Serializable {
+    /**
+     * Repositório associado ao usuário, contendo dados e funcionalidades relacionadas.
+     */
     private Repository repository;
 
     /**

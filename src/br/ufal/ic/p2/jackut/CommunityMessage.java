@@ -8,9 +8,24 @@ import java.io.Serializable;
  * Implements Serializable to support object persistence.
  */
 public class CommunityMessage implements Serializable {
+    /**
+     * Version identifier for serialization.
+     */
     private static final long serialVersionUID = 1L;
+
+    /**
+     * The user who sent the message.
+     */
     private User sender;
+
+    /**
+     * The community to which the message was sent.
+     */
     private Community community;
+
+    /**
+     * The content of the message.
+     */
     private String message;
 
     /**

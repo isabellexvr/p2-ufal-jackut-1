@@ -3,11 +3,15 @@ package br.ufal.ic.p2.jackut;
 import br.ufal.ic.p2.jackut.Exceptions.*;
 
 /**
- * Classe de fachada para o sistema Jackut.
- * Responsável por fornecer métodos de acesso ao sistema.
+ * Provides a simplified interface to the Jackut system, exposing core functionality
+ * for managing users, sessions, communities, and messages.
+ * This class acts as a facade in the Facade Design Pattern.
  */
 public class Facade {
 
+    /**
+     * The core system object that contains the business logic and state.
+     */
     private final Jackut jackut = new Jackut();
 
     /**
@@ -105,7 +109,6 @@ public class Facade {
      *
      * @param login O login do usuário.
      * @return Uma String representando os amigos do usuário.
-     * @throws UserNotFoundException Se o usuário não for encontrado.
      */
     public String getAmigos(String login)  {
         return this.jackut.getFriends(login);

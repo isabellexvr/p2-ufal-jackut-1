@@ -12,16 +12,45 @@ import java.util.*;
  */
 public class Repository implements Serializable {
 
+    /**
+     * Version identifier for serialization.
+     */
     private static final long serialVersionUID = 1L;
+
+    /**
+     * File path where user data is stored.
+     */
     private static final String USERS_FILE = "jackut_users.dat";
+
+    /**
+     * File path where session data is stored.
+     */
     private static final String SESSIONS_FILE = "jackut_sessions.dat";
+
+    /**
+     * File path where community data is stored.
+     */
     private static final String COMMUNITIES_FILE = "jackut_communities.dat";
 
-    private static Repository instance; // Singleton instance
+    /**
+     * Singleton instance of the Repository class.
+     */
+    private static Repository instance;
 
+    /**
+     * Map of registered users, where the key is the login and the value is the User object.
+     */
     private Map<String, User> users = new HashMap<>();
+
+    /**
+     * Map of active sessions, where the key is the session token and the value is the Session object.
+     */
     private Map<String, Session> sessions = new HashMap<>();
-    private Map<String, Community> communities = new HashMap<>(); // name pra comunidade, único
+
+    /**
+     * Map of communities, where the key is the community name (must be unique) and the value is the Community object.
+     */
+    private Map<String, Community> communities = new HashMap<>();
 
 
     /**

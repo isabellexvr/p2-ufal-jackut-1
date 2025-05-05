@@ -9,9 +9,24 @@ import java.util.ArrayList;
  * Implements Serializable to allow object serialization.
  */
 public class Community implements Serializable {
+    /**
+     * The name of the community. Must be unique.
+     */
     private String name;
+
+    /**
+     * A brief description of the community's purpose or theme.
+     */
     private String description;
+
+    /**
+     * The user who created and owns the community.
+     */
     private User owner;
+
+    /**
+     * A list of users who are members of the community.
+     */
     private ArrayList<User> members;
 
     /**

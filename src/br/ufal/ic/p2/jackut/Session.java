@@ -7,7 +7,13 @@ import java.io.Serializable;
  * Each session is identified by a unique ID and is associated with a specific user.
  */
 public class Session implements Serializable {
+    /**
+     * Id da sessão.
+     */
     private String id;
+    /**
+     * User que gerou a sessão.
+     */
     private User user;
 
     /**

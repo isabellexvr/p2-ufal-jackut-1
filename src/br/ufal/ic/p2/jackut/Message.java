@@ -8,11 +8,29 @@ import java.io.Serializable;
  */
 public class Message implements Serializable {
 
+    /**
+     * Version identifier for serialization.
+     */
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Session ID of the user who sent the message.
+     */
     private String senderSessionId;
+
+    /**
+     * User object representing the sender of the message.
+     */
     private User sender;
+
+    /**
+     * Login of the user who will receive the message.
+     */
     private String receiverLogin;
+
+    /**
+     * The content of the message.
+     */
     private String text;
 
     /**
