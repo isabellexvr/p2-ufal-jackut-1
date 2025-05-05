@@ -1,146 +1,35 @@
 @startuml
-!define RECTANGLE class
 
-' Main Class Definitions
-RECTANGLE User {
-  - login: String
-  - name: String
-  - password: String
-  - messages: Queue<Message>
-  - communityMessages: Queue<CommunityMessage>
-  - friends: List<String>
-  - enemies: List<String>
-  - followers: List<String>
-  - crushes: List<String>
-  - communities: List<String>
-  + addMessage(m: Message): void
-  + addCommunityMessage(m: CommunityMessage): void
-  + getMessages(): Queue<Message>
-  + getFirstMessage(): String
-  + getFirstCommunityMessage(): String
-  + isFriend(login: String): boolean
-  + isEnemy(login: String): boolean
-  + doesUserFollow(login: String): boolean
-  + isCrush(login: String): boolean
-  + addFriend(login: String): void
-  + addEnemy(login: String): void
-  + follow(login: String): void
-  + addCrush(login: String): void
-  + addCommunity(name: String): void
-  + removeCommunity(name: String): void
-  + getFriends(): List<String>
-  + getCrushes(): List<String>
-  + getFollowers(): List<String>
-  + getCommunities(): List<String>
-}
+skinparam classAttributeIconSize 0
+skinparam classFontStyle bold
+skinparam classFontSize 14
+skinparam classBackgroundColor LightSkyBlue
+skinparam classArrowColor DarkSlateGray
+skinparam classBorderColor DarkSlateGray
 
-RECTANGLE Community {
-  - name: String
-  - description: String
-  - owner: User
-  - members: List<User>
-  + getName(): String
-  + getDescription(): String
-  + getOwner(): String
-  + getMembers(): List<String>
-  + addMember(user: User): void
-  + isAlreadyMember(user: User): boolean
-  + sendMessageToMembers(m: CommunityMessage): void
-}
-
-RECTANGLE Message {
-  - senderSessionId: String
-  - receiverLogin: String
-  - text: String
-  - sender: User
-  + getText(): String
-  + getSenderSessionId(): String
-  + getSender(): User
-  + getReceiver(): String
-}
-
-RECTANGLE CommunityMessage {
-  - sender: User
-  - community: Community
-  - message: String
-  + getSender(): User
-  + getCommunity(): Community
-  + getMessage(): String
-}
-
-RECTANGLE Jackut {
-  - repository: Repository
-  + resetSystem(): void
+class Facade {
   + createUser(login: String, password: String, name: String): void
-  + getUserAttribute(login: String, attribute: String): String
-  + newSession(login: String, password: String): String
-  + endSystem(): void
-  + editProfile(id: String, attribute: String, value: String): void
-  + getFriends(login: String): String
-  + isFriend(login: String, friend: String): boolean
-  + addFriend(userSessionId: String, friendLogin: String): void
-  + sendMessage(sessionId: String, receiverLogin: String, message: String): void
-  + getFirstMessage(sessionId: String): String
-  + createCommunity(sessionId: String, name: String, description: String): void
+  + abrirSessao(login: String, password: String): String
+  + getAtributoUsuario(login: String, atributo: String): String
+  + editarPerfil(sessionId: String, attribute: String, value: String): void
+  + criarComunidade(sessionId: String, name: String, description: String): void
   + getCommunityDescription(communityName: String): String
   + getCommunityOwner(communityName: String): String
-  + getCommunityMembers(communityName: String): String
-  + getCommunitiesByLogin(ownerLogin: String): String
-  + addMemberToCommunity(session: String, communityName: String): void
-  + getMessage(sessionId: String): String
-  + sendCommunityMessage(sessionId: String, communityName: String, message: String): void
-  + isFan(fanLogin: String, idolLogin: String): boolean
-  + follow(userId: String, idolLogin: String): void
-  + getFollowers(userLogin: String): String
-  + isCrush(userId: String, crushLogin: String): boolean
-  + addCrush(userId: String, crushLogin: String): void
-  + getCrushes(userId: String): String
-  + addEnemy(sessionId: String, enemyLogin: String): void
-  + removeUser(userId: String): void
+  + getCommunitiesByUser(login: String): ArrayList<String>
+  + eraseSystem(): void
 }
 
-RECTANGLE Facade {
-  - jackut: Jackut
-  + resetSystem(): void
-  + createUser(login: String, password: String, name: String): void
-  + getUserAttribute(login: String, attribute: String): String
-  + openSession(login: String, password: String): String
-  + shutdownSystem(): void
-  + editProfile(id: String, attribute: String, value: String): void
-  + addFriend(id: String, friend: String): void
-  + getFriends(login: String): String
-  + isFriend(login: String, friend: String): boolean
-  + sendMessage(id: String, recipient: String, message: String): void
-  + readMessage(sessionId: String): String
-  + createCommunity(session: String, name: String, description: String): void
-  + getCommunityDescription(name: String): String
-  + getCommunityOwner(name: String): String
-  + getCommunityMembers(name: String): String
-  + getUserCommunities(login: String): String
-  + addToCommunity(session: String, name: String): void
-  + readMessage(id: String): String
-  + sendCommunityMessage(id: String, community: String, message: String): void
-  + isFan(login: String, idol: String): boolean
-  + follow(id: String, idol: String): void
-  + getFollowers(login: String): String
-  + isCrush(id: String, crush: String): boolean
-  + addCrush(id: String, crush: String): void
-  + getCrushes(id: String): String
-  + addEnemy(id: String, enemy: String): void
-  + removeUser(id: String): void
-}
-
-RECTANGLE Repository {
-  - instance: Repository
+class Repository {
+  - USERS_FILE: String
+  - SESSIONS_FILE: String
+  - COMMUNITIES_FILE: String
+  - static instance: Repository
   - users: Map<String, User>
   - sessions: Map<String, Session>
   - communities: Map<String, Community>
-  - USERS_FILE: String = "jackut_users.dat"
-  - SESSIONS_FILE: String = "jackut_sessions.dat"
-  - COMMUNITIES_FILE: String = "jackut_communities.dat"
-  - serialVersionUID: long = 1L
 
-  + getInstance(): Repository
+  - Repository()
+  + static getInstance(): Repository
   + isCommunityCreated(communityName: String): boolean
   + newCommunity(name: String, community: Community): void
   + getCommunityByName(communityName: String): Community
@@ -153,39 +42,119 @@ RECTANGLE Repository {
   + addUser(login: String, password: String, name: String): void
   + eraseEverything(): void
   + saveData(): void
-  + editProfile(session: Session, atributo: String, valor: String): void
+  - saveToFile(fileName: String, data: Object): void
+  - loadFromFile<T>(fileName: String, defaultValue: T): T
+  + editProfile(session: Session, attribute: String, value: String): void
+  - loadData(): void
   + getUser(login: String): User
   + deleteUser(login: String): void
-
-  - loadData(): void
-  - saveToFile(fileName: String, data: Object): void
-  - loadFromFile(fileName: String, defaultValue: T): T
 }
 
-RECTANGLE Session {
+class Session implements Serializable {
+  - serialVersionUID: long
   - id: String
   - user: User
+
+  + Session(id: String, user: User)
   + getId(): String
   + getUser(): User
 }
 
+class User implements Serializable {
+  - serialVersionUID: long
+  - login: String
+  - password: String
+  - name: String
+  - attributes: Map<String, String>
+  - messages: List<Message>
+  - communityMessages: List<CommunityMessage>
+  - communities: ArrayList<String>
+  - friends: ArrayList<String>
+
+  + User(login: String, password: String, name: String)
+  + getLogin(): String
+  + getPassword(): String
+  + getName(): String
+  + getAtributo(atributo: String): String
+  + setAtributo(attribute: String, value: String): void
+  + addMessage(message: Message): void
+  + getMessages(): List<Message>
+  + addCommunityMessage(message: CommunityMessage): void
+  + getCommunityMessages(): List<CommunityMessage>
+  + addCommunity(communityName: String): void
+  + removeCommunity(communityName: String): void
+  + getCommunities(): ArrayList<String>
+  + addFriend(friendLogin: String): void
+  + removeFriend(friendLogin: String): void
+  + getFriends(): ArrayList<String>
+}
+
+class Community implements Serializable {
+  - name: String
+  - description: String
+  - owner: User
+  - members: ArrayList<User>
+
+  + Community(name: String, description: String, owner: User)
+  + getName(): String
+  + getDescription(): String
+  + getOwner(): String
+  + getMembers(): ArrayList<String>
+  + sendMessageToMembers(message: CommunityMessage): void
+  + isAlreadyMember(user: User): Boolean
+  + addMember(user: User): void
+}
+
+class Message implements Serializable {
+  - serialVersionUID: long
+  - senderSessionId: String
+  - sender: User
+  - receiverLogin: String
+  - text: String
+
+  + Message(senderSessionId: String, receiverLogin: String, text: String, sender: User)
+  + getText(): String
+  + getSenderSessionId(): String
+  + getSender(): User
+  + getReceiver(): String
+}
+
+class CommunityMessage implements Serializable {
+  - serialVersionUID: long
+  - sender: User
+  - community: Community
+  - message: String
+
+  + CommunityMessage(sender: User, community: Community, message: String)
+  + getSender(): User
+  + getCommunity(): Community
+  + getMessage(): String
+}
+
+package "Exceptions" {
+  class UserNotFoundException
+  class UserAlreadyExistsException
+  class InvalidPasswordOrLoginException
+  class EmptyAttributeException
+  class CommunityDoesntExistException
+}
+
 ' Relationships
-User "1" *-- "0..*" Message : sends
-User "1" *-- "0..*" CommunityMessage : receives
-User "1" *-- "0..*" User : friends with
-User "1" *-- "0..*" User : enemies with
-User "1" *-- "0..*" User : follows
-User "1" *-- "0..*" User : crushes on
+Repository "1" *-- "*" User : contains
+Repository "1" *-- "*" Session : contains
+Repository "1" *-- "*" Community : contains
+Session "1" --> "1" User : references
+User "1" *-- "*" Message : receives
+User "1" *-- "*" CommunityMessage : receives
+Community "1" *-- "*" User : has members
+CommunityMessage "1" --> "1" User : sent by
+CommunityMessage "1" --> "1" Community : sent to
+Message "1" --> "1" User : sent by
 
-Community "1" *-- "1" User : owned by
-Community "1" *-- "0..*" User : has members
-Community "1" *-- "0..*" CommunityMessage : generates
+' Repository is a Singleton
+Repository ..> Repository : <<creates>>
 
-Jackut "1" *-- "1" Repository : uses
-Facade "1" *-- "1" Jackut : uses
-Repository "1" *-- "0..*" User : contains
-Repository "1" *-- "0..*" Community : contains
-Repository "1" *-- "0..*" Session : contains
+' Facade uses Repository
+Facade --> Repository : uses
 
-Session "1" *-- "1" User : represents
 @enduml
